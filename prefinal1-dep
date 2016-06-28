@@ -1,0 +1,30 @@
+create procedure uspCreateTemporaryTableDEP
+@tempTableName VARCHAR(30)
+AS
+begin
+declare @SQLTableTempNamer NVARCHAR(31)
+set @SQLTableTempNamer = '##' + @tempTableName
+declare @SQLTableCreator AS NVARCHAR(300)
+declare @SQLTableInserter AS NVARCHAR(MAX)
+
+set @SQLTableCreator =
+'CREATE TABLE ' + @SQLTableTempNamer + ' (
+ deptno INT NOT NULL,
+ dname VARCHAR(14),
+ loc VARCHAR(13)) '
+
+set @SQLTableInserter = '
+begin
+insert into ' + @SQLTableTempNamer + ' values (1,''ACCOUNTING'',''ST LOUIS'')
+insert into ' + @SQLTableTempNamer + ' values (2,''RESEARCH'',''NEW YORK'')
+insert into ' + @SQLTableTempNamer + ' values (3,''SALES'',''ATLANTA'')
+insert into ' + @SQLTableTempNamer + ' values (4, ''OPERATIONS'',''SEATTLE'')
+end '
+
+exec sp_executesql @SQLTableCreator;
+exec sp_executesql @SQLTableInserter;
+
+end
+
+EXEC uspCreateTemporaryTableDEP 'tblDepartment';
+
